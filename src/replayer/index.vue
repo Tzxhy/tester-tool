@@ -9,7 +9,7 @@
                 variant="outline"
                 theme="primary"
             >
-                导入ZIP包
+                导入数据ZIP包
             </t-button>
         </t-upload>
         <t-button
@@ -26,10 +26,12 @@
             @click="reset">重置</t-button>
         <t-button
             block
+            :disabled="!events.length"
             @click="back"
         >后退5秒</t-button>
         <t-button
             block
+            :disabled="!events.length"
             @click="forward"
         >前进5秒</t-button>
         <t-select
@@ -42,7 +44,7 @@
 </template>
 
 <script lang="ts" setup>
-import { SelectValue, UploadFile } from 'tdesign-vue-next';
+import { MessagePlugin, SelectValue, UploadFile } from 'tdesign-vue-next';
 import {
     replay,
     strFromU8,
@@ -68,32 +70,38 @@ const beforeUpload = async (file: File | UploadFile) => {
     const arrayBuffer = await targetFile!.arrayBuffer();
     const u = new Uint8Array(arrayBuffer);
 
-    const uz = unzipSync(u, {
-        filter(file) {
-            // console.log('file: ', file);
-            return true;
-        },
-    });
+    try {
+        const uz = unzipSync(u, {
+            filter(file) {
+                // console.log('file: ', file);
+                return true;
+            },
+        });
 
-    // console.log('uz: ', uz);
-    allData = JSON.parse(strFromU8(uz['tester-data/archive/archive0.json'])).map(i => i.data);
-    events.value = allData.map(i => {
-        if (i.type === 'capture') {
-            return i.data;
-        }
-        return i;
-    });
-    console.log('events.value: ', events.value);
+        // console.log('uz: ', uz);
+        allData = JSON.parse(strFromU8(uz['tester-data/archive/archive0.json'])).map(i => i.data);
+        events.value = allData.map(i => {
+            if (i.type === 'capture') {
+                return i.data;
+            }
+            return i;
+        });
+        console.log('events.value: ', events.value);
+    } catch(e) {
+        console.log('error: ', e)
+        MessagePlugin.error('解析zip包错误')
+    }
 
     return false;
 };
-let player!: ReturnType<typeof replay>;
+let player: ReturnType<typeof replay> | null = null;
 let currentTime = 0;
 let isPlaying = false;
 const play = () => {
     if (!events.value.length) return;
     if (!player) {
         player = replay(events.value, {
+            speed: speed.value,
             plugins: [
                 {
                     handler(event, isSync, context) {
@@ -126,6 +134,7 @@ const reset = () => {
     if (player) {
         
         player.destroy();
+        player = null;
         isPlaying = false;
     }
 };
@@ -190,11 +199,14 @@ const speedOptions = [
         label: 2,
         value: 2,
     },
-]
+].map(i => ({
+    label: '播放倍速：' + i.label,
+    value: i.value,
+}))
 const onChangeSpeedOption = (v: SelectValue) => {
     console.log('v: ', v);
     speed.value = v as number;
-    player.setConfig({
+    player?.setConfig({
         speed: speed.value,
     })
 }
