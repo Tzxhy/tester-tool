@@ -43,6 +43,9 @@ export default abstract class Ability {
             this.source.dataDao = d;
         }
     }
+    afterClear() {
+        //
+    }
 
     renderDynamicUi(): HTMLElement | null {
         return null;

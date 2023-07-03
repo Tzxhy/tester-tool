@@ -7,3 +7,8 @@ declare module '*.vue' {
     const component: DefineComponent<any, any, any>;
     export default component;
 }
+declare module "axios" {
+    type AxiosInstance = any;
+    type AxiosRequestConfig = any;
+    type AxiosResponse = any;
+}

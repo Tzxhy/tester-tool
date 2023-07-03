@@ -11,5 +11,8 @@ export default class CaptureAbility extends Ability {
     stopRecord(): void;
     private updateLogTimer;
     renderDynamicUi(): HTMLElement | null;
+    visibilitychange: () => void;
+    inject(): void;
     eject(): void;
+    afterClear(): void;
 }

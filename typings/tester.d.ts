@@ -18,6 +18,7 @@ export default class TesterController {
     pause(): void;
     /** 停止 */
     stop(): void;
+    clear(): void;
     /** 销毁实例 */
     destroy(): void;
     /** 下载所有数据到一个zip包 */

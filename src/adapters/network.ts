@@ -3,7 +3,7 @@
 import {
     type AxiosInstance,
     type AxiosRequestConfig,
-    AxiosResponse,
+    type AxiosResponse,
 } from 'axios';
 
 import Adapter from './adapter';
@@ -17,13 +17,9 @@ export default class NetworkAdapter extends Adapter {
         this.axios = axios;
     }
 
-    private requestHandlerId = -1;
-
     private responseHandlerId = -1;
 
     customInject(): boolean {
-        // this.requestHandlerId = this.axios.interceptors.request.use(this.requestSuccess);
-        // this.responseHandlerId = this.axios.interceptors.response.use(this.responseSuccess);
         // @ts-ignore
         this.axios.interceptors.response.handlers.unshift({
             fulfilled: this.responseSuccess,
@@ -60,7 +56,6 @@ export default class NetworkAdapter extends Adapter {
     }
 
     restore() {
-        this.axios.interceptors.request.eject(this.requestHandlerId);
         this.axios.interceptors.response.eject(this.responseHandlerId);
     }
 }

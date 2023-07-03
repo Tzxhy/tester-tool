@@ -23,6 +23,7 @@ import {
 import {
     drag,
     // log,
+    // log,
 } from './utils';
 
 const ALL_ABILITIES_CLS = Object.freeze([
@@ -132,8 +133,19 @@ export default class TesterController {
         const stop = document.createElement('button');
         stop.innerText = '关闭(双击)';
         stop.addEventListener('dblclick', this.stop.bind(this));
-        wrapper.appendChild(d);
-        wrapper.appendChild(stop);
+        const reset = document.createElement('button');
+        reset.innerText = '重置(双击)';
+        reset.addEventListener('dblclick', this.clear.bind(this));
+        const ul = document.createElement('ul')
+        const lis = [d, stop, reset].map(i => {
+            const li = document.createElement('li')
+            li.appendChild(i);
+            return li;
+        });
+        lis.forEach(i => {
+            ul.appendChild(i);
+        })
+        wrapper.appendChild(ul);
 
         document.body.appendChild(wrapper);
     }
@@ -158,6 +170,13 @@ export default class TesterController {
         this.destroy();
         localStorage.setItem(OPEN_TESTER_KEY, 'false');
         window.location.reload();
+    }
+
+    clear() {
+        this.abilities.forEach(i => {
+            i.getDataDao().clear();
+            i.afterClear();
+        });
     }
 
     /** 销毁实例 */

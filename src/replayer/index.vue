@@ -102,6 +102,7 @@ const play = () => {
     if (!player) {
         player = replay(events.value, {
             speed: speed.value,
+            UNSAFE_replayCanvas: true,
             plugins: [
                 {
                     handler(event, isSync, context) {

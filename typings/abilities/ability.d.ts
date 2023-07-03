@@ -18,6 +18,7 @@ export default abstract class Ability {
     protected dataDao: DataDao;
     constructor(adapter: Adapter | null, source: Source | null);
     _injectDataDao(d: DataDao): void;
+    afterClear(): void;
     renderDynamicUi(): HTMLElement | null;
     getDataDao(): DataDao;
     inject(): void;

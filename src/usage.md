@@ -82,6 +82,7 @@ function handleKeyPress(e: KeyboardEvent) {
     nowMatchIdx = -1;
 }
 export async function initTestEntry() {
+    if (window.location.pathname === '/tester') return;
     const o = localStorage.getItem(OPEN_TESTER_KEY) === 'true';
     window.addEventListener('keypress', handleKeyPress);
     if (o) {
