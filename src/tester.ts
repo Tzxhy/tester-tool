@@ -3,7 +3,7 @@
 /* eslint-disable class-methods-use-this */
 import {
     strToU8,
-    zipSync,
+    zip,
 } from 'fflate';
 import {
     saveAs,
@@ -21,10 +21,11 @@ import {
     DataPool,
 } from './data';
 import {
-    drag,
+    drag, getFilenameTime,
     // log,
     // log,
 } from './utils';
+import { MessagePlugin } from 'tdesign-vue-next';
 
 const ALL_ABILITIES_CLS = Object.freeze([
     ConsoleAbility,
@@ -201,13 +202,19 @@ export default class TesterController {
         this.archivePool.get().forEach((dao, idx) => {
             archive[dao.type + idx + '.json'] = strToU8(JSON.stringify(dao.get()));
         });
-        const save = zipSync({
+        zip({
             'tester-data': {
                 slice: data,
                 archive,
             },
+        }, (err, save) => {
+            if (err) {
+                MessagePlugin.error(JSON.stringify(err));
+                return;
+            }
+            saveAs(new Blob([save]), `tester-data-${getFilenameTime()}.zip`);
+
         });
-        saveAs(new Blob([save]), 'tester-data.zip');
     }
 }
 

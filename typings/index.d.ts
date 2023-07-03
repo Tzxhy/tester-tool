@@ -1,13 +1,8 @@
 import { strFromU8, unzipSync } from 'fflate';
-import * as rrweb from 'rrweb';
-import { playerConfig } from 'rrweb/typings/types';
+export { drag } from './utils';
 export * from './abilities';
 export * as ConsoleAdapter from './adapters/console';
 export * as TesterController from './tester';
 export { log } from './utils';
 declare const OPEN_TESTER_KEY = "__user_open_tester__";
 export { OPEN_TESTER_KEY, strFromU8, unzipSync, };
-export declare function record(): any;
-export declare function replay(events: rrweb.EventType[], config?: Partial<playerConfig>): rrweb.Replayer;
-export declare function getDefaultUI(): HTMLDivElement;
-export declare function getPlayUI(): HTMLDivElement;

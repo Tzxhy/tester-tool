@@ -124,7 +124,7 @@ const play = () => {
 };
 
 const pause = () => {
-    if (!events.value.length) return;
+    if (!events.value.length || !player) return;
     currentTime = player.getCurrentTime();
     player?.pause();
     isPlaying = false;

@@ -35,3 +35,8 @@ export function drag(ele: HTMLElement) {
     }, 16);
     window.addEventListener('mousemove', handleMouseMove);
 }
+
+export function getFilenameTime() {
+    const n = new Date();
+    return `${n.getFullYear()}-${n.getMonth() + 1}-${n.getDate()}-${n.getHours()}-${n.getMinutes()}-${n.getSeconds()}`;
+}

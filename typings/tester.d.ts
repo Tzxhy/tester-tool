@@ -13,7 +13,7 @@ export default class TesterController {
     archiveDataDao: () => void;
     private testerWrapperId;
     prepareUI(): void;
-    static getAllAbilitiesClass(): readonly (typeof CaptureAbility | typeof ConsoleAbility | typeof NetworkAbility)[];
+    static getAllAbilitiesClass(): readonly (typeof ConsoleAbility | typeof NetworkAbility | typeof CaptureAbility)[];
     /** 开始 */
     pause(): void;
     /** 停止 */
