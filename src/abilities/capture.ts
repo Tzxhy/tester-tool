@@ -42,6 +42,7 @@ export default class CaptureAbility extends Ability {
         const self = this;
         this.stopFn = rrweb.record({
             recordCanvas: true,
+            checkoutEveryNth: 200,
             emit(event) {
                 self.dataDao.add(event);
             },
@@ -78,25 +79,25 @@ export default class CaptureAbility extends Ability {
         return u;
     }
 
-    visibilitychange = () => {
-        const isHidden = document.hidden;
-        if (isHidden && this.started) {
-            this.stopRecord();
-        } else if (!isHidden && !this.started) {
-            this.startRecord();
-        }
-    }
+    // visibilitychange = () => {
+    //     const isHidden = document.hidden;
+    //     if (isHidden && this.started) {
+    //         this.stopRecord();
+    //     } else if (!isHidden && !this.started) {
+    //         this.startRecord();
+    //     }
+    // }
 
     inject(): void {
         this.startRecord();
-        window.document.addEventListener('visibilitychange', this.visibilitychange);
+        // window.document.addEventListener('visibilitychange', this.visibilitychange);
     }
 
     eject(): void {
         window.clearInterval(this.updateLogTimer);
         super.eject();
         this.stopRecord();
-        window.document.removeEventListener('visibilitychange', this.visibilitychange);
+        // window.document.removeEventListener('visibilitychange', this.visibilitychange);
     }
 
     afterClear(): void {

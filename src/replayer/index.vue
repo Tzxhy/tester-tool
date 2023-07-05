@@ -1,5 +1,8 @@
 <template>
-    <div :class="css.tester">
+    <div
+        ref="r"
+        class="tester"
+        :class="css.tester">
         <t-upload
             theme="custom"
             accept=".zip"
@@ -12,14 +15,6 @@
                 导入数据ZIP包
             </t-button>
         </t-upload>
-        <t-button
-            block
-            :disabled="!events.length"
-            @click="play">播放</t-button>
-        <t-button
-            block
-            :disabled="!events.length"
-            @click="pause">暂停</t-button>
         <t-button
             block
             :disabled="!events.length"
@@ -44,23 +39,41 @@
 </template>
 
 <script lang="ts" setup>
-import { MessagePlugin, SelectValue, UploadFile } from 'tdesign-vue-next';
 import {
+    type PlayerType,
+    drag,
+    log,
+    originConsole,
     replay,
     strFromU8,
     unzipSync,
 } from '../';
+import {
+    MessagePlugin, SelectValue, UploadFile,
+} from 'tdesign-vue-next';
 import {
     onMounted,
     onUnmounted,
     ref,
     shallowRef,
 } from 'vue';
-import { log } from '../utils';
+
+const r = shallowRef<HTMLElement>();
 
 const events = shallowRef([]) as any;
 let allData = [] as any[];
+
+const formatData = (dataStr: string | null) => {
+    if (!dataStr) return null;
+    try {
+        return JSON.parse(dataStr);
+    } catch (e) {
+        return null;
+    }
+};
+
 const beforeUpload = async (file: File | UploadFile) => {
+    reset();
     let targetFile: File;
     if ('raw' in file) {
         targetFile = file.raw!;
@@ -73,13 +86,10 @@ const beforeUpload = async (file: File | UploadFile) => {
     try {
         const uz = unzipSync(u, {
             filter(file) {
-                // console.log('file: ', file);
                 return true;
             },
         });
-
-        // console.log('uz: ', uz);
-        allData = JSON.parse(strFromU8(uz['tester-data/archive/archive0.json'])).map(i => i.data);
+        allData = JSON.parse(strFromU8(uz['tester-data/archive/archive.json'])).map(i => i.data);
         events.value = allData.map(i => {
             if (i.type === 'capture') {
                 return i.data;
@@ -87,88 +97,68 @@ const beforeUpload = async (file: File | UploadFile) => {
             return i;
         });
         console.log('events.value: ', events.value);
-    } catch(e) {
-        console.log('error: ', e)
-        MessagePlugin.error('解析zip包错误')
+        player = replay({
+            props: {
+                events: events.value,
+                speed: speed.value,
+                UNSAFE_replayCanvas: true,
+                plugins: [
+                    {
+                        handler(event: any, isSync, context) {
+                            if (typeof event.type === 'string') {
+                                // log(event);
+                                if (event.type === 'console') {
+                                    const d = event.data;
+                                    originConsole[d.level](...d.args);
+                                } else if (event.type === 'network') {
+                                    const d = event.data;
+                                    const methodName = d.type === 'succ' ? 'info' : 'error';
+                                    originConsole[methodName]('网络请求：\n', `地址：${d.data.config.url}\n`, '参数：', formatData(d.data.config.data) || d.data.config.params, '\n', '响应：', d.data.data);
+                                } else if (event.type === 'error') {
+                                    originConsole.error('捕获错误：', event.data);
+                                }
+                            }
+                        },
+                    },
+                ],
+            },
+        } as any);
+        player.pause();
+    } catch (e) {
+        console.log('error: ', e);
+        MessagePlugin.error('解析zip包错误');
     }
 
     return false;
 };
-let player: ReturnType<typeof replay> | null = null;
-let currentTime = 0;
-let isPlaying = false;
-const play = () => {
-    if (!events.value.length) return;
-    if (!player) {
-        player = replay(events.value, {
-            speed: speed.value,
-            UNSAFE_replayCanvas: true,
-            plugins: [
-                {
-                    handler(event, isSync, context) {
-                        if (typeof event.type === 'string') {
-                            log(event);
-                            // context.replayer.pause()
-                            // const n = context.replayer.getTimeOffset()
-                            // debugger;
-                            // context.replayer.play(n);
-                        }
-                    },
-                }
-            ]
-        });
-    } else {
-        player.play(currentTime);
-    }
-    isPlaying = true;
-};
-
-const pause = () => {
-    if (!events.value.length || !player) return;
-    currentTime = player.getCurrentTime();
-    player?.pause();
-    isPlaying = false;
-};
+let player: PlayerType | null = null;
 
 const reset = () => {
     events.value = [];
     if (player) {
-        
-        player.destroy();
+        player.getReplayer().destroy();
         player = null;
-        isPlaying = false;
+        document.querySelector('.rr-player')?.remove();
     }
 };
 
 const toggle = () => {
-    if (isPlaying) {
-        pause()
-    } else {
-        play();
-    }
-}
+    player?.toggle();
+};
 
 const back = () => {
     if (!player) return;
-    const t = player.getCurrentTime()
+    const t = player.getReplayer().getCurrentTime();
     console.log('t: ', t);
-    if (isPlaying) {
-        player.play(t - 5000)
-    } else {
-        player.pause(t - 5000);
-    }
-}
+    player.goto(t - 5000);
+};
 
 const forward = () => {
     if (!player) return;
-    const t = player.getCurrentTime()
+    const t = player.getReplayer().getCurrentTime();
     console.log('t: ', t);
-    if (isPlaying) {
-        player.play(t + 5000)
-    } else {
-        player.pause(t + 5000);
-    }
-}
+    player.goto(t + 5000);
+};
 
 const speed = ref(1);
 const speedOptions = [
@@ -203,29 +193,28 @@ const speedOptions = [
 ].map(i => ({
     label: '播放倍速：' + i.label,
     value: i.value,
-}))
+}));
 const onChangeSpeedOption = (v: SelectValue) => {
     console.log('v: ', v);
     speed.value = v as number;
-    player?.setConfig({
-        speed: speed.value,
-    })
-}
+    player?.setSpeed(speed.value);
+};
 
 const onKeyDown = (e: KeyboardEvent) => {
     e.preventDefault();
     if (e.key === ' ') {
         toggle();
     }
-}
+};
 
 onMounted(() => {
     window.addEventListener('keypress', onKeyDown);
-})
+    drag(r.value as HTMLElement);
+});
 
-onUnmounted(() =>  {
+onUnmounted(() => {
     window.removeEventListener('keypress', onKeyDown);
-})
+});
 
 </script>
 <script lang="ts">
@@ -237,7 +226,7 @@ export default {
 <style lang="less" module="css">
 .tester {
     position: fixed;
-    padding: 8px;
+    padding: 32px 8px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -248,5 +237,14 @@ export default {
     background-color: #eee;
     z-index: 999;
     box-shadow: 2px 2px 6px 5px #999;
+}
+</style>
+<style lang="less" scoped>
+.tester {
+    ::v-deep {
+        .t-button:not(.t-button--variant-text) + .t-button:not(.t-button--variant-text) {
+            margin-left: 0;
+        }
+    }
 }
 </style>

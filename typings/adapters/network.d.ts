@@ -7,7 +7,7 @@ export default class NetworkAdapter extends Adapter {
     customInject(): boolean;
     requestSuccess: (v: AxiosRequestConfig) => any;
     responseSuccess: (v: AxiosResponse) => any;
-    responseFail: (v: AxiosResponse) => any;
+    responseFail: (v: AxiosResponse) => Promise<never>;
     getStackTrace(excludeFn?: CallableFunction): any;
     restore(): void;
 }

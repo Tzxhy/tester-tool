@@ -6,11 +6,9 @@ export default class TesterController {
     private abilities;
     private dataPool;
     private archivePool;
-    private archiveDataDaoTimer;
     private currentDataDao;
     constructor(abilities: Ability[]);
     onAddData: (d: any) => boolean;
-    archiveDataDao: () => void;
     private testerWrapperId;
     prepareUI(): void;
     static getAllAbilitiesClass(): readonly (typeof ConsoleAbility | typeof NetworkAbility | typeof CaptureAbility)[];

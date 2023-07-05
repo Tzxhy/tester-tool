@@ -262,6 +262,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tsconfig/svelte@npm:^1.0.0":
+  version: 1.0.13
+  resolution: "@tsconfig/svelte@npm:1.0.13"
+  checksum: b769bb9bbe1fdeb4aa5755e087ab9a79cde5e68d0eecae12dc94427a176cb4969e50112d35508a04829f0a026e6e288c1510dbd57a6d6199c3cc9f6ee607bbec
+  languageName: node
+  linkType: hard
+
 "@types/css-font-loading-module@npm:0.0.7":
   version: 0.0.7
   resolution: "@types/css-font-loading-module@npm:0.0.7"
@@ -315,6 +322,7 @@ __metadata:
     less: ^4.1.3
     lodash: ^4.17.21
     rrweb: ^2.0.0-alpha.4
+    rrweb-player: ^1.0.0-alpha.4
     tdesign-vue-next: ^1.3.9
     typescript: ^5.0.2
     vite: ^4.3.9
@@ -1594,6 +1602,16 @@ __metadata:
   dependencies:
     rrweb-snapshot: ^2.0.0-alpha.4
   checksum: b6d84ed84ebab685ea9b8a1edae401d016e741799d42c5539008228dcf55cf2216cffdb353f83468ecc20b5cba1acde3dd77e408bb502b358c7e6ca847773e41
+  languageName: node
+  linkType: hard
+
+"rrweb-player@npm:^1.0.0-alpha.4":
+  version: 1.0.0-alpha.4
+  resolution: "rrweb-player@npm:1.0.0-alpha.4"
+  dependencies:
+    "@tsconfig/svelte": ^1.0.0
+    rrweb: ^2.0.0-alpha.4
+  checksum: 43f73e48e9aff080efe82b424ce948ab06de84c4afd5e6e800a641ca39b1e79df6b00d3c2c52bc747ab4ac713cfbed0fa54c0bfd7c994693fff57ae1d29795fa
   languageName: node
   linkType: hard
 

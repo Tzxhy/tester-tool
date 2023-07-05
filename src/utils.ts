@@ -2,9 +2,19 @@ import {
     throttle,
 } from 'lodash';
 
+const originConsole: Record<string, CallableFunction> = {};
+Object.keys(console).forEach(i => {
+    const key: keyof typeof console = i as any;
+    if (typeof console[key] === 'function') {
+        originConsole[i] = console[key].bind(console)
+    }
+})
 const oLog = console.log;
 export function log(...args: any[]) {
     oLog(...args);
+}
+export {
+    originConsole,
 }
 
 export function drag(ele: HTMLElement) {

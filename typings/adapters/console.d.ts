@@ -3,7 +3,7 @@ export declare enum CONSOLE_LEVEL {
     DEFAULT = "default",
     VERBOSE = "verbose",
     INFO = "info",
-    WARNING = "warning",
+    WARNING = "warn",
     ERROR = "error"
 }
 export default class ConsoleAdapter extends Adapter {

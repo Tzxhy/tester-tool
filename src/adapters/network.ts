@@ -7,6 +7,7 @@ import {
 } from 'axios';
 
 import Adapter from './adapter';
+// import { log } from '..';
 
 export default class NetworkAdapter extends Adapter {
 
@@ -35,7 +36,7 @@ export default class NetworkAdapter extends Adapter {
 
     responseSuccess = (v: AxiosResponse) => {
         this.dataDao.add({
-            t: 'succ',
+            type: 'succ',
             data: v,
         });
         return v;
@@ -43,10 +44,10 @@ export default class NetworkAdapter extends Adapter {
 
     responseFail = (v: AxiosResponse) => {
         this.dataDao.add({
-            t: 'fail',
+            type: 'fail',
             data: v,
         });
-        return v;
+        return Promise.reject(v);
     };
 
     getStackTrace(excludeFn?: CallableFunction) {

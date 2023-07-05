@@ -1,5 +1,6 @@
 /* eslint-disable class-methods-use-this */
 
+import { log } from '..';
 import Adapter from './adapter';
 
 export default class ErrorAdapter extends Adapter {
@@ -29,12 +30,12 @@ export default class ErrorAdapter extends Adapter {
     };
 
     handleError = (e: ErrorEvent) => {
+        log(e)
         this.dataDao.add({
             msg: e.message,
             track: e.error?.stack || this.getStackTrace(this.handleError),
             type: 'error',
         });
-        return false;
     };
 
     handleUnhandledRejection = (e: PromiseRejectionEvent) => {

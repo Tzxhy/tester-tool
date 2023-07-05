@@ -8,7 +8,7 @@ export enum CONSOLE_LEVEL {
     DEFAULT = 'default',
     VERBOSE = 'verbose',
     INFO = 'info',
-    WARNING = 'warning',
+    WARNING = 'warn',
     ERROR = 'error',
 }
 type CONSOLE_METHOD = keyof typeof console;
@@ -49,6 +49,20 @@ const LEVEL_MAP: Record<CONSOLE_LEVEL, CONSOLE_METHOD[]> = {
     [CONSOLE_LEVEL.ERROR]: ERROR,
 };
 
+const METHOD_TO_LEVEL: Record<CONSOLE_METHOD, CONSOLE_LEVEL> = {} as any;
+ERROR.forEach(i => {
+    METHOD_TO_LEVEL[i] = CONSOLE_LEVEL.ERROR;
+});
+WARNING.forEach(i => {
+    METHOD_TO_LEVEL[i] = CONSOLE_LEVEL.WARNING;
+});
+INFO.forEach(i => {
+    METHOD_TO_LEVEL[i] = CONSOLE_LEVEL.INFO;
+});
+VERBOSE.forEach(i => {
+    METHOD_TO_LEVEL[i] = CONSOLE_LEVEL.VERBOSE;
+});
+
 export default class ConsoleAdapter extends Adapter {
     private originConsole: Record<string, CallableFunction> = {};
 
@@ -82,6 +96,7 @@ export default class ConsoleAdapter extends Adapter {
                 self.emit({
                     args,
                     track,
+                    level: METHOD_TO_LEVEL[key],
                 });
                 // @ts-ignore
                 originMethod.apply(console, args);

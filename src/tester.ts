@@ -11,7 +11,7 @@ import {
 
 import {
     OPEN_TESTER_KEY,
-} from '.';
+} from './constants';
 import Ability from './abilities/ability';
 import CaptureAbility from './abilities/capture';
 import ConsoleAbility from './abilities/console';
@@ -40,8 +40,6 @@ export default class TesterController {
 
     private archivePool: DataPool;
 
-    private archiveDataDaoTimer: number;
-
     private currentDataDao: DataDao = new DataDao('');
 
     constructor(abilities: Ability[]) {
@@ -59,7 +57,7 @@ export default class TesterController {
             d.setParent(this.dataPool);
             i.inject();
         });
-        this.archiveDataDaoTimer = window.setInterval(this.archiveDataDao, 1000 * 60); // 每60秒来一次
+        // this.archiveDataDaoTimer = window.setInterval(this.archiveDataDao, 1000 * 60); // 每60秒来一次
         this.prepareUI();
     }
 
@@ -68,13 +66,13 @@ export default class TesterController {
         return true;
     };
 
-    archiveDataDao = () => {
-        // this.abilities.forEach(i => {
-        //     i.getDataDao().archive();
-        // });
-        this.currentDataDao = new DataDao('archive');
-        this.archivePool.add(this.currentDataDao);
-    };
+    // archiveDataDao = () => {
+    //     // this.abilities.forEach(i => {
+    //     //     i.getDataDao().archive();
+    //     // });
+    //     this.currentDataDao = new DataDao('archive');
+    //     this.archivePool.add(this.currentDataDao);
+    // };
 
     private testerWrapperId = '';
 
@@ -87,7 +85,7 @@ export default class TesterController {
         wrapper.classList.add('rr-block', 'rr-ignore');
 
         const s = document.createElement('style');
-        s.innerText = `
+        s.innerHTML = `
             .divider {
                 margin-bottom: 8px;
                 width: 100%;
@@ -182,29 +180,29 @@ export default class TesterController {
 
     /** 销毁实例 */
     destroy() {
-        window.clearInterval(this.archiveDataDaoTimer);
+        // window.clearInterval(this.archiveDataDaoTimer);
         this.abilities.forEach(i => (i.eject()));
         document.querySelector(`[data-tester-id='${this.testerWrapperId}']`)?.remove();
     }
 
     /** 下载所有数据到一个zip包 */
     download() {
-        const allData = this.abilities.map(i => ({
-            type: i.abilityName,
-            data: i.getDataDao().get(),
-            ext: i.dataExt,
-        }));
-        const data = {} as any;
-        allData.forEach(item => {
-            data[item.type + (item.ext || '')] = strToU8(JSON.stringify(item.data));
-        });
+        // const allData = this.abilities.map(i => ({
+        //     type: i.abilityName,
+        //     data: i.getDataDao().get(),
+        //     ext: i.dataExt,
+        // }));
+        // const data = {} as any;
+        // allData.forEach(item => {
+        //     data[item.type + (item.ext || '')] = strToU8(JSON.stringify(item.data));
+        // });
         const archive = {} as any;
-        this.archivePool.get().forEach((dao, idx) => {
-            archive[dao.type + idx + '.json'] = strToU8(JSON.stringify(dao.get()));
-        });
+        // .forEach((dao, idx) => {
+        archive['archive' + '.json'] = strToU8(JSON.stringify(this.currentDataDao.get()));
+        // });
         zip({
             'tester-data': {
-                slice: data,
+                // slice: data,
                 archive,
             },
         }, (err, save) => {

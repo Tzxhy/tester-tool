@@ -4,7 +4,7 @@ export default class ErrorAdapter extends Adapter {
     getStackTrace(excludeFn?: CallableFunction): any;
     inject(): void;
     handleOnError: (msg: Event | string, _url?: string, _line?: number, _col?: number, error?: Error) => void;
-    handleError: (e: ErrorEvent) => boolean;
+    handleError: (e: ErrorEvent) => void;
     handleUnhandledRejection: (e: PromiseRejectionEvent) => void;
     restore(): void;
 }
