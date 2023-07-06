@@ -2,7 +2,8 @@ import { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 
 import Adapter from './adapter';
 export default class NetworkAdapter extends Adapter {
     private axios;
-    constructor(axios: AxiosInstance);
+    private isResError;
+    constructor(axios: AxiosInstance, isResError: (r: AxiosResponse) => boolean);
     private responseHandlerId;
     customInject(): boolean;
     requestSuccess: (v: AxiosRequestConfig) => any;

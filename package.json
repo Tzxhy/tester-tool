@@ -1,6 +1,6 @@
 {
   "name": "@tzxhy/tool-tester",
-  "version": "0.0.1-alpha.4",
+  "version": "0.0.1-alpha.5",
   "type": "module",
   "module": "src/index.ts",
   "main": "lib/tool-tester.js",
@@ -25,7 +25,7 @@
     "lodash": "^4.17.21",
     "rrweb": "^2.0.0-alpha.4",
     "rrweb-player": "^1.0.0-alpha.4",
-    "tdesign-vue-next": "^1.3.9"
+    "tdesign-vue-next": "0.12.2"
   },
   "packageManager": "yarn@3.6.1",
   "peerDependencies": {

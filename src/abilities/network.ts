@@ -1,6 +1,7 @@
 /* eslint-disable class-methods-use-this */
 
 import {
+    AxiosResponse,
     type AxiosInstance,
 } from 'axios';
 
@@ -9,8 +10,12 @@ import Ability from './ability';
 
 export default class NetworkAbility extends Ability {
 
-    constructor(axiosInstance: AxiosInstance) {
-        super(new NetworkAdapter(axiosInstance), null);
+    constructor(axiosInstance: AxiosInstance, opts?: {
+        isResError: (r: AxiosResponse) => boolean;
+    }) {
+        const isResError = opts?.isResError ?? (() => false);
+        super(new NetworkAdapter(axiosInstance, isResError), null);
+
     }
 
     get abilityName(): string {

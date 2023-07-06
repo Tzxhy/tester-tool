@@ -9,13 +9,21 @@ import {
 import Adapter from './adapter';
 // import { log } from '..';
 
+enum ResType {
+    FAIL = 'fail',
+    SUCC = 'succ',
+}
+
 export default class NetworkAdapter extends Adapter {
 
     private axios: AxiosInstance;
 
-    constructor(axios: AxiosInstance) {
+    private isResError:  (r: AxiosResponse) => boolean;
+
+    constructor(axios: AxiosInstance, isResError: (r: AxiosResponse) => boolean) {
         super();
         this.axios = axios;
+        this.isResError = isResError;
     }
 
     private responseHandlerId = -1;
@@ -35,8 +43,9 @@ export default class NetworkAdapter extends Adapter {
     requestSuccess = (v: AxiosRequestConfig) => v;
 
     responseSuccess = (v: AxiosResponse) => {
+        const type = this.isResError(v) ? ResType.FAIL : ResType.SUCC;
         this.dataDao.add({
-            type: 'succ',
+            type,
             data: v,
         });
         return v;
@@ -44,7 +53,7 @@ export default class NetworkAdapter extends Adapter {
 
     responseFail = (v: AxiosResponse) => {
         this.dataDao.add({
-            type: 'fail',
+            type: ResType.FAIL,
             data: v,
         });
         return Promise.reject(v);

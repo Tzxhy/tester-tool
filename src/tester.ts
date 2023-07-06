@@ -22,15 +22,15 @@ import {
 } from './data';
 import {
     drag, getFilenameTime,
-    // log,
-    // log,
 } from './utils';
 import { MessagePlugin } from 'tdesign-vue-next';
+import { ErrorAbility } from '.';
 
 const ALL_ABILITIES_CLS = Object.freeze([
     ConsoleAbility,
     NetworkAbility,
     CaptureAbility,
+    ErrorAbility,
 ]);
 
 export default class TesterController {

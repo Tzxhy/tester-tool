@@ -2,6 +2,7 @@ import Ability from './abilities/ability';
 import CaptureAbility from './abilities/capture';
 import ConsoleAbility from './abilities/console';
 import NetworkAbility from './abilities/network';
+import { ErrorAbility } from '.';
 export default class TesterController {
     private abilities;
     private dataPool;
@@ -11,7 +12,7 @@ export default class TesterController {
     onAddData: (d: any) => boolean;
     private testerWrapperId;
     prepareUI(): void;
-    static getAllAbilitiesClass(): readonly (typeof ConsoleAbility | typeof NetworkAbility | typeof CaptureAbility)[];
+    static getAllAbilitiesClass(): readonly (typeof NetworkAbility | typeof ConsoleAbility | typeof CaptureAbility | typeof ErrorAbility)[];
     /** 开始 */
     pause(): void;
     /** 停止 */
