@@ -43,6 +43,9 @@ export default abstract class Ability {
             this.source.dataDao = d;
         }
     }
+    afterLoad() {
+        //
+    }
     afterClear() {
         //
     }

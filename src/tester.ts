@@ -56,6 +56,7 @@ export default class TesterController {
             this.dataPool.add(d);
             d.setParent(this.dataPool);
             i.inject();
+            i.afterLoad();
         });
         // this.archiveDataDaoTimer = window.setInterval(this.archiveDataDao, 1000 * 60); // 每60秒来一次
         this.prepareUI();
