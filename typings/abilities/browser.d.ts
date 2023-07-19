@@ -12,4 +12,7 @@ export default class BrowserAbility extends Ability {
     get dataExt(): string;
     constructor();
     afterLoad(): void;
+    private updateLogTimer;
+    renderDynamicUi(): HTMLElement | null;
+    eject(): void;
 }

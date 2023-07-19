@@ -39,4 +39,20 @@ export default class BrowserAbility extends Ability {
         this.dataDao.add(info);
     }
 
+    private updateLogTimer!: number;
+
+    renderDynamicUi(): HTMLElement | null {
+        const u = document.createElement('div');
+        u.innerHTML = '<p>当前已收集<span class=\'number\'>0</span>条数据</p>';
+        this.updateLogTimer = window.setInterval(() => {
+            (u.querySelector('.number') as HTMLSpanElement)!.innerText = this.dataDao.length + '';
+        }, 5000);
+        return u;
+    }
+
+    eject(): void {
+        super.eject();
+        window.clearInterval(this.updateLogTimer);
+    }
+
 }

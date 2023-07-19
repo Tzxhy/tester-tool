@@ -18,5 +18,8 @@ export default class AbilityCheckAbility extends Ability {
     constructor(checks?: CheckItem[]);
     addCheck(check: CheckItem): void;
     afterLoad(): void;
+    private updateLogTimer;
+    renderDynamicUi(): HTMLElement | null;
+    eject(): void;
 }
 export {};

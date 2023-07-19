@@ -12,7 +12,7 @@ export default class TesterController {
     onAddData: (d: any) => boolean;
     private testerWrapperId;
     prepareUI(): void;
-    static getAllAbilitiesClass(): readonly (typeof CaptureAbility | typeof ConsoleAbility | typeof NetworkAbility | typeof ErrorAbility)[];
+    static getAllAbilitiesClass(): readonly (typeof ConsoleAbility | typeof NetworkAbility | typeof CaptureAbility | typeof ErrorAbility)[];
     /** 开始 */
     pause(): void;
     /** 停止 */

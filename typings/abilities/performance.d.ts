@@ -18,4 +18,6 @@ export default class PerformanceAbility extends Ability {
     private observer;
     afterLoad(): void;
     eject(): void;
+    private updateLogTimer;
+    renderDynamicUi(): HTMLElement | null;
 }

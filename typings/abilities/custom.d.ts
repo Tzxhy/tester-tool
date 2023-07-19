@@ -12,4 +12,7 @@ export default class CustomAbility extends Ability {
     get dataExt(): string;
     constructor();
     addData(d: any): void;
+    private updateLogTimer;
+    renderDynamicUi(): HTMLElement | null;
+    eject(): void;
 }

@@ -1,5 +1,7 @@
 /* eslint-disable class-methods-use-this */
-
+import {
+    cloneDeep,
+} from 'lodash'
 import Ability from './ability';
 
 /**
@@ -41,10 +43,10 @@ export default class PerformanceAbility extends Ability {
         this.observer.observe({
             entryTypes: [
                 'element',
-                'event',
+                // 'event',
                 'first-input',
                 'largest-contentful-paint',
-                'layout-shift',
+                // 'layout-shift',
                 'longtask',
                 'mark',
                 'measure',
@@ -60,20 +62,22 @@ export default class PerformanceAbility extends Ability {
     afterLoad(): void {
         const performance = window.performance;
 
-        const info = {} as Record<string, any>
+        const info = {
+            type: 'after-load',
+        } as Record<string, any>
 
         if ('memory' in performance) {
-            info.memory = {
-                ...performance.memory!,
-            }
+            info.memory = cloneDeep(performance.memory);
         }
         info.timeOrigin = performance.timeOrigin;
         const navigationTiming = performance.getEntriesByType('navigation')?.[0];
         if (navigationTiming) {
-            info.timing = {
-                ...navigationTiming,
-            }
+            info.timing = cloneDeep(navigationTiming);
         }
+
+        const paints = performance.getEntriesByType('paint');
+
+        info.paints = cloneDeep(paints);
 
         this.dataDao.add(info);
 
@@ -82,6 +86,17 @@ export default class PerformanceAbility extends Ability {
     eject() {
         super.eject();
         this.observer.disconnect();
+        window.clearInterval(this.updateLogTimer);
     }
 
+    private updateLogTimer!: number;
+
+    renderDynamicUi(): HTMLElement | null {
+        const u = document.createElement('div');
+        u.innerHTML = '<p>当前已收集<span class=\'number\'>0</span>条信息</p>';
+        this.updateLogTimer = window.setInterval(() => {
+            (u.querySelector('.number') as HTMLSpanElement)!.innerText = this.dataDao.length + '';
+        }, 5000);
+        return u;
+    }
 }
