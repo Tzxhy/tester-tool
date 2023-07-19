@@ -28,6 +28,8 @@ export default class PerformanceAbility extends Ability {
         return '.json';
     }
 
+    private gatherMemoryTimer: number;
+
     constructor() {
         super(null, null);
         this.observer = new PerformanceObserver((list) => {
@@ -54,7 +56,20 @@ export default class PerformanceAbility extends Ability {
                 'paint',
                 'resource',
             ]
-        })
+        });
+        this.gatherMemoryTimer = window.setInterval(() => {
+            if ('memory' in performance) {
+                const info = {
+                    type: 'memory',
+                } as Record<string, any>;
+                info.memory = {
+                    jsHeapSizeLimit: (performance.memory as any)?.jsHeapSizeLimit,
+                    totalJSHeapSize: (performance.memory as any)?.totalJSHeapSize,
+                    usedJSHeapSize: (performance.memory as any)?.usedJSHeapSize,
+                };
+                this.dataDao.add(info);
+            }
+        }, 5000)
     }
 
     private observer: PerformanceObserver;
@@ -67,12 +82,16 @@ export default class PerformanceAbility extends Ability {
         } as Record<string, any>
 
         if ('memory' in performance) {
-            info.memory = cloneDeep(performance.memory);
+            info.memory = {
+                jsHeapSizeLimit: (performance.memory as any)?.jsHeapSizeLimit,
+                totalJSHeapSize: (performance.memory as any)?.totalJSHeapSize,
+                usedJSHeapSize: (performance.memory as any)?.usedJSHeapSize,
+            };
         }
         info.timeOrigin = performance.timeOrigin;
         const navigationTiming = performance.getEntriesByType('navigation')?.[0];
         if (navigationTiming) {
-            info.timing = cloneDeep(navigationTiming);
+            info.timing = cloneDeep(navigationTiming.toJSON());
         }
 
         const paints = performance.getEntriesByType('paint');
@@ -87,6 +106,7 @@ export default class PerformanceAbility extends Ability {
         super.eject();
         this.observer.disconnect();
         window.clearInterval(this.updateLogTimer);
+        window.clearInterval(this.gatherMemoryTimer);
     }
 
     private updateLogTimer!: number;

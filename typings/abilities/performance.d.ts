@@ -14,6 +14,7 @@ export default class PerformanceAbility extends Ability {
     get abilityName(): string;
     get abilityChineseName(): string;
     get dataExt(): string;
+    private gatherMemoryTimer;
     constructor();
     private observer;
     afterLoad(): void;
