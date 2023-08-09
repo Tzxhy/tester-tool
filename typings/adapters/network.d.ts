@@ -3,8 +3,12 @@ import Adapter from './adapter';
 export default class NetworkAdapter extends Adapter {
     private axios;
     private isResError;
-    constructor(axios: AxiosInstance, isResError: (r: AxiosResponse) => boolean);
+    private pendingTimeout;
+    private pendingCache;
+    private apiId;
+    constructor(axios: AxiosInstance, isResError: (r: AxiosResponse) => boolean, pendingTimeout?: number);
     private responseHandlerId;
+    private requestHandlerId;
     customInject(): boolean;
     requestSuccess: (v: AxiosRequestConfig) => any;
     responseSuccess: (v: AxiosResponse) => any;

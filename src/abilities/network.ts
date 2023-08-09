@@ -12,9 +12,11 @@ export default class NetworkAbility extends Ability {
 
     constructor(axiosInstance: AxiosInstance, opts?: {
         isResError: (r: AxiosResponse) => boolean;
+        pendingTimeout?: number;
     }) {
         const isResError = opts?.isResError ?? (() => false);
-        super(new NetworkAdapter(axiosInstance, isResError), null);
+        const pendingTimeout = opts?.pendingTimeout ?? Infinity;
+        super(new NetworkAdapter(axiosInstance, isResError, pendingTimeout), null);
 
     }
 
